@@ -11,7 +11,7 @@
     clearPrewarmedResources,
   } from 'maplibre-gl';
   import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?url';
-  import type { Coordinates } from 'maplibre-gl';
+  import type { Coordinates, StyleSpecification } from 'maplibre-gl';
   import type { FeatureCollection } from 'geojson';
   import {
     PROJECTION_NAME,
@@ -40,6 +40,14 @@
   let dirty = $state(false);
   let gridVisible = $state(true);
   let tilesVisible = $state(true);
+  let vectorVisible = $state(false);
+  let vectorLoading = $state(false);
+  let vectorError = $state('');
+  let vectorStyle: StyleSpecification | undefined;
+  let vectorLayerIds: string[] = [];
+  const vectorStyleUrl =
+    'https://tile.openstreetmap.jp/styles/osm-bright-ja/style.json';
+  const vectorPrefix = 'osm-vector/';
   let imageVisible = $state(false);
   let imageOpacity = $state(80);
   let imageAvailable = $state(true);
@@ -110,6 +118,8 @@
       // Sources keep their initial projection; a fresh map is required on each CRS change.
       projected?.remove();
       projected = undefined;
+      vectorLayerIds = [];
+      vectorError = '';
       removeProjection(PROJECTION_NAME);
       addProjection(crs);
       busy = true;
@@ -225,6 +235,7 @@
       );
       projected.on('load', () => {
         busy = false;
+        void updateVectorTiles();
       });
       projected.on('error', (event) => {
         error = `描画エラー: ${event.error.message}`;
@@ -293,6 +304,61 @@
     );
   }
 
+  async function updateVectorTiles() {
+    const map = projected;
+    if (!map || busy) return;
+    if (!vectorVisible) {
+      for (const id of vectorLayerIds)
+        map.setLayoutProperty(id, 'visibility', 'none');
+      vectorError = '';
+      return;
+    }
+    vectorLoading = true;
+    vectorError = '';
+    try {
+      if (!vectorStyle) {
+        const response = await fetch(vectorStyleUrl);
+        if (!response.ok)
+          throw new Error(
+            `スタイルの取得に失敗しました (${response.status})。`,
+          );
+        vectorStyle = (await response.json()) as StyleSpecification;
+      }
+      if (projected !== map || !vectorVisible) return;
+      const style = vectorStyle;
+      if (vectorLayerIds.length === 0) {
+        map.setGlyphs(style.glyphs);
+        if (typeof style.sprite === 'string') map.setSprite(style.sprite);
+        for (const [id, source] of Object.entries(style.sources)) {
+          if (source.type === 'vector')
+            map.addSource(`${vectorPrefix}${id}`, source);
+        }
+        // Keep MVT tile coordinates unchanged, just as with the Mercator raster tiles.
+        for (const layer of style.layers) {
+          if (
+            !('source' in layer) ||
+            typeof layer.source !== 'string' ||
+            style.sources[layer.source]?.type !== 'vector'
+          )
+            continue;
+          const id = `${vectorPrefix}${layer.id}`;
+          map.addLayer(
+            { ...layer, id, source: `${vectorPrefix}${layer.source}` },
+            map.getLayer('sample-image') ? 'sample-image' : 'borders',
+          );
+          vectorLayerIds.push(id);
+        }
+      }
+      for (const id of vectorLayerIds)
+        map.setLayoutProperty(id, 'visibility', 'visible');
+    } catch (cause) {
+      if (projected === map)
+        vectorError = cause instanceof Error ? cause.message : String(cause);
+    } finally {
+      if (projected === map) vectorLoading = false;
+    }
+  }
+
   function locateImage() {
     if (!projected || !imageAvailable) return;
     projected.fitBounds([imageCoordinates[3], imageCoordinates[1]], {
@@ -343,6 +409,7 @@
       cancelled = true;
       resize.disconnect();
       projected?.remove();
+      projected = undefined;
       clearPrewarmedResources();
       removeProjection(PROJECTION_NAME);
     };
@@ -386,8 +453,10 @@
         }}
       ></textarea>
       <div class="apply-row">
-        <button class="apply" type="submit" disabled={!ready || busy}
-          >適用</button
+        <button
+          class="apply"
+          type="submit"
+          disabled={!ready || busy || vectorLoading}>適用</button
         >
         <span class="apply-status" aria-live="polite"
           >{busy
@@ -500,6 +569,20 @@
           onchange={toggleTiles}
         />地理院 標準地図 <span>EPSG:3857</span></label
       >
+      <label class="checkbox"
+        ><input
+          type="checkbox"
+          bind:checked={vectorVisible}
+          onchange={() => {
+            void updateVectorTiles();
+          }}
+          disabled={!ready || busy || vectorLoading}
+        />OSM ベクター <span>EPSG:3857</span></label
+      >
+      {#if vectorLoading}<p class="field-hint" role="status">
+          ベクタースタイルを読み込み中…
+        </p>{/if}
+      {#if vectorError}<div class="error" role="alert">{vectorError}</div>{/if}
       <p class="field-hint">
         再投影せず現在のグリッドに配置します。CRS・グリッドが配信元と異なる場合、位置がずれます。
       </p>
