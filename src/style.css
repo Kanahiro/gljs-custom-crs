@@ -1,0 +1,380 @@
+:root {
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #24282d;
+  background: #fff;
+  font-synthesis: none;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+}
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+button {
+  cursor: pointer;
+}
+button:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+a {
+  color: #205b9e;
+}
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+summary:focus-visible {
+  outline: 2px solid #2867b2;
+  outline-offset: 2px;
+}
+.app-shell {
+  display: grid;
+  grid-template: 44px minmax(0, 1fr) / 300px minmax(0, 1fr);
+  height: 100dvh;
+}
+.app-header {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 0 16px;
+  border-bottom: 1px solid #c9cdd2;
+  background: #f3f4f5;
+}
+h1 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0;
+}
+.app-header > span {
+  color: #656b73;
+  font-size: 12px;
+}
+.app-header a {
+  margin-left: auto;
+  font-size: 12px;
+  text-decoration: none;
+}
+.app-header a:hover {
+  text-decoration: underline;
+}
+aside {
+  min-height: 0;
+  overflow-y: auto;
+  border-right: 1px solid #c9cdd2;
+  padding: 18px 16px;
+  display: flex;
+  flex-direction: column;
+}
+label {
+  display: block;
+  font-size: 12px;
+  margin-bottom: 6px;
+}
+select,
+input[type='number'],
+textarea {
+  width: 100%;
+  color: #24282d;
+  background: #fff;
+  border: 1px solid #adb4bd;
+  border-radius: 2px;
+}
+select {
+  height: 33px;
+  padding: 0 7px;
+  font-size: 12px;
+}
+.field-hint {
+  color: #666d76;
+  font-size: 11px;
+  line-height: 1.65;
+  margin: 8px 0 18px;
+}
+textarea {
+  display: block;
+  min-height: 180px;
+  padding: 10px;
+  resize: vertical;
+  font:
+    12px/1.75 ui-monospace,
+    SFMono-Regular,
+    Consolas,
+    monospace;
+  overflow-wrap: anywhere;
+}
+.apply-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
+}
+button {
+  border: 1px solid #b6bcc4;
+  border-radius: 2px;
+  background: #f5f6f7;
+  color: #323840;
+  padding: 6px 11px;
+  font-size: 12px;
+}
+button:hover:not(:disabled) {
+  background: #e8ebee;
+}
+.apply {
+  background: #245fa9;
+  border-color: #245fa9;
+  color: #fff;
+  min-width: 72px;
+}
+.apply:hover:not(:disabled) {
+  background: #194e91;
+}
+.apply-status {
+  color: #6b7178;
+  font-size: 11px;
+}
+details {
+  margin-top: 18px;
+  padding-top: 12px;
+  border-top: 1px solid #e0e3e6;
+}
+summary {
+  cursor: pointer;
+  color: #464d55;
+  font-size: 12px;
+}
+details[open] summary {
+  margin-bottom: 12px;
+}
+details .field-hint {
+  margin-bottom: 12px;
+}
+input[type='number'] {
+  display: block;
+  margin: 5px 0 10px;
+  height: 31px;
+  padding: 4px 7px;
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 12px;
+}
+.input-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.input-pair label {
+  min-width: 0;
+}
+.view-settings {
+  border-top: 1px solid #e0e3e6;
+  padding-top: 14px;
+  margin-top: 18px;
+}
+h2 {
+  font-size: 12px;
+  font-weight: 600;
+  margin: 0;
+}
+.view-settings h2 {
+  margin-bottom: 10px;
+}
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 12px;
+}
+.checkbox input {
+  margin: 0;
+  accent-color: #245fa9;
+}
+.checkbox span {
+  color: #767d86;
+  margin-left: auto;
+  font-size: 11px;
+}
+.opacity-label {
+  display: flex;
+  justify-content: space-between;
+}
+.opacity-label output {
+  color: #767d86;
+}
+input[type='range'] {
+  width: 100%;
+  margin: 0 0 12px;
+  accent-color: #245fa9;
+}
+.locate-image {
+  width: 100%;
+}
+.sidebar-note {
+  margin-top: auto;
+  padding-top: 24px;
+  font-size: 11px;
+  color: #727981;
+  line-height: 1.7;
+}
+.sidebar-note p {
+  margin: 0;
+}
+.sidebar-note details {
+  margin-top: 10px;
+  padding-top: 0;
+  border: 0;
+}
+.sidebar-note summary {
+  font-size: 11px;
+  color: #727981;
+}
+.error {
+  border-left: 2px solid #b34036;
+  color: #a02e26;
+  background: #fff5f3;
+  padding: 8px 10px;
+  margin-top: 12px;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+main {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.map-panel {
+  flex: 1;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+.map-title {
+  height: 35px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 10px;
+  border-bottom: 1px solid #c9cdd2;
+  background: #fafafa;
+}
+.map-title span {
+  font-size: 11px;
+  color: #6a7179;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.map-title h2 {
+  white-space: nowrap;
+}
+.map-canvas {
+  flex: 1;
+  min-height: 0;
+  background: #e8eef2;
+}
+.coordinate-strip {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  min-height: 29px;
+  border-top: 1px solid #c9cdd2;
+  padding: 4px 10px;
+  color: #535b65;
+  background: #f3f4f5;
+  font:
+    11px/1.5 ui-monospace,
+    SFMono-Regular,
+    Consolas,
+    monospace;
+}
+.coordinate-strip b {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-weight: 400;
+  color: #7a8189;
+  margin-right: 6px;
+}
+.zoom-status {
+  margin-left: auto;
+}
+.loading {
+  position: absolute;
+  inset: 35px 0 0;
+  display: grid;
+  place-items: center;
+  background: #e8eef2ed;
+  font-size: 12px;
+  color: #626b75;
+  pointer-events: none;
+}
+.maplibregl-ctrl-attrib {
+  font-size: 10px !important;
+}
+.maplibregl-ctrl-group {
+  border-radius: 2px !important;
+}
+.maplibregl-canvas:focus-visible {
+  outline: 2px solid #2867b2;
+  outline-offset: -2px;
+}
+@media (max-width: 1000px) {
+  .app-shell {
+    grid-template-columns: 270px minmax(0, 1fr);
+  }
+  .coordinate-strip {
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+}
+@media (max-width: 700px) {
+  .app-shell {
+    height: auto;
+    display: block;
+  }
+  .app-header {
+    min-height: 44px;
+    flex-wrap: wrap;
+    gap: 6px 12px;
+    padding: 10px 12px;
+  }
+  .app-header > span,
+  .app-header a {
+    font-size: 11px;
+  }
+  aside {
+    padding: 14px 12px;
+    border-right: 0;
+    border-bottom: 1px solid #c9cdd2;
+  }
+  textarea {
+    min-height: 110px;
+  }
+  .sidebar-note {
+    padding-top: 16px;
+  }
+  .map-canvas {
+    min-height: 380px;
+  }
+  .coordinate-strip {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3px;
+  }
+  .zoom-status {
+    margin-left: 0;
+  }
+}

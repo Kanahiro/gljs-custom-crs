@@ -1,0 +1,7 @@
+minimumReleaseAge: 10080
+# The requested release is the subject of this verification app.
+minimumReleaseAgeExclude:
+  - maplibre-gl@6.15.0
+  - '@maplibre/geojson-vt@6.3.0'
+allowBuilds:
+  esbuild: true
