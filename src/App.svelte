@@ -39,7 +39,8 @@
   let applied = $state(presets[0].label);
   let dirty = $state(false);
   let gridVisible = $state(true);
-  let imageVisible = $state(true);
+  let tilesVisible = $state(true);
+  let imageVisible = $state(false);
   let imageOpacity = $state(80);
   let imageAvailable = $state(true);
   // Bounds of the original Web Mercator tile (z=5, x=28, y=12), clockwise.
@@ -126,6 +127,17 @@
                 '<a href="https://www.naturalearthdata.com/">Natural Earth</a>',
             },
             graticule: { type: 'geojson', data: lines },
+            'mercator-tiles': {
+              type: 'raster',
+              tiles: [
+                'https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png',
+              ],
+              tileSize: 256,
+              minzoom: 0,
+              maxzoom: 18,
+              attribution:
+                '<a href="https://maps.gsi.go.jp/development/ichiran.html#std">国土地理院 標準地図</a>',
+            },
             ...(imageAvailable
               ? {
                   'sample-image': {
@@ -147,6 +159,14 @@
               type: 'fill',
               source: 'countries',
               paint: { 'fill-color': '#f8f8f6' },
+            },
+            // Deliberately use the current CRS grid to expose the lack of tile reprojection.
+            {
+              id: 'mercator-tiles',
+              type: 'raster',
+              source: 'mercator-tiles',
+              layout: { visibility: tilesVisible ? 'visible' : 'none' },
+              paint: { 'raster-fade-duration': 0 },
             },
             // Images are positioned by four corners, not reprojected pixel by pixel.
             ...(imageAvailable
@@ -261,6 +281,15 @@
       'sample-image',
       'raster-opacity',
       imageOpacity / 100,
+    );
+  }
+
+  function toggleTiles() {
+    if (!projected?.getLayer('mercator-tiles')) return;
+    projected.setLayoutProperty(
+      'mercator-tiles',
+      'visibility',
+      tilesVisible ? 'visible' : 'none',
     );
   }
 
@@ -461,6 +490,19 @@
           onchange={toggleGrid}
         />経緯線 <span>15° 間隔</span></label
       >
+    </div>
+    <div class="view-settings">
+      <h2>XYZ タイル</h2>
+      <label class="checkbox"
+        ><input
+          type="checkbox"
+          bind:checked={tilesVisible}
+          onchange={toggleTiles}
+        />地理院 標準地図 <span>EPSG:3857</span></label
+      >
+      <p class="field-hint">
+        再投影せず現在のグリッドに配置します。CRS・グリッドが配信元と異なる場合、位置がずれます。
+      </p>
     </div>
     <div class="view-settings">
       <h2>画像レイヤー</h2>
